@@ -20,6 +20,7 @@
 
 -ifdef(TEST).
 -export([randwait/2,splithead/3,decode/3,typeahead/5]).
+-export([addtime/2]).
 -endif.
 
 get_urls({_Pid, DynVars})->
@@ -32,7 +33,13 @@ get_urls({_Pid, DynVars})->
               {ok, Valmax} -> Valmax;
               false -> 8
           end,
-    decode(DynVars, Min, Max).
+    Urls = decode(DynVars, Min, Max),    
+    addtime(Urls, []).
+
+addtime([H|T], Acc)->
+    lists:merge([[H,randwait()]], addtime(T,Acc));
+addtime([],Acc) ->
+    Acc.
 
 decode(DynVars, Min, Max)->
     case ts_dynvars:lookup(url, DynVars) of
@@ -54,7 +61,7 @@ typeahead([H|T], B, Urls, Loop, Max) ->
     case Loop =< Max of
         true ->
             lists:merge(typeahead(T, lists:flatten([B])++lists:flatten([H]), Urls, Loop + 1, Max),
-                        [[binary:list_to_bin(lists:flatten([B])++lists:flatten([H])), randwait()]]);
+                        [binary:list_to_bin(lists:flatten([B])++lists:flatten([H]))]);
         false -> Urls
     end;
 

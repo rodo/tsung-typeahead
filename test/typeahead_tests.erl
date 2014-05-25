@@ -15,12 +15,11 @@
 %% Function tested : typeahead/3
 %%
 %%
-
 typeahead_test() ->
-    Result = length(typeahead:typeahead("belleville", 2, 4)),
-    Attend = 3,
-    ?assertEqual(Attend, Result).
-
+    [Alpha,Beta,Gamma] = typeahead:typeahead("ipsum", 2, 4),
+    ?assertEqual(<<"ip">>, Alpha),
+    ?assertEqual(<<"ips">>, Beta),
+    ?assertEqual(<<"ipsu">>, Gamma).
 %%
 %% Function tested : typeahead/3
 %%
@@ -54,16 +53,15 @@ typeahead_main_test() ->
 %%
 typeahead_init_test() ->
     %% the main test
-    Result = typeahead:typeahead("orem","l",[], 2, 4),
-    [[<<"lo">>, Rand1], [<<"lor">>, _], [<<"lore">>,_]] = Result,
-    ?assertEqual(true, is_integer(Rand1)).
+    Result = typeahead:typeahead("orem","l",[], 2, 4),   
+    ?assertEqual([<<"lo">>, <<"lor">>, <<"lore">>], Result).
 %%
 %% Function tested : typeahead/1
 %%
 %%
 typeahead_default_test() ->
-    [[Url,_]|_] = typeahead:typeahead("belleville"),
-    ?assertEqual(<<"bell">>, Url).
+    [Url|_] = typeahead:typeahead("belleville"),
+    ?assertEqual(<<"bel">>, Url).
 
 typeahead_default_small_test() ->
     Result = typeahead:typeahead("foo"),
@@ -102,13 +100,6 @@ randwait_max_test() ->
     Attend = true,
     ?assertEqual(Attend, Result).
 
-decode_test() ->
-    %% the tsung call
-    Dynvars = [{url, "lorem"}],
-    Result = typeahead:decode(Dynvars, 2, 4),
-    Attend = [<<"lo">>,<<"lor">>,<<"lore">>],
-    ?assertEqual(Attend, Result).
-
 decode_urlempty_test() ->
     %% url is not set in tsung scenario
     Dynvars = [],
@@ -116,9 +107,24 @@ decode_urlempty_test() ->
     Attend = [],
     ?assertEqual(Attend, Result).
 
-geturl_test() ->
+decode_test() ->
     %% the tsung call
     Dynvars = [{url, "lorem"}],
     Result = typeahead:decode(Dynvars, 2, 4),
     Attend = [<<"lo">>,<<"lor">>,<<"lore">>],
     ?assertEqual(Attend, Result).
+
+addtime_test()->
+    [[Alpha,First], [Beta,Second]] = typeahead:addtime([<<"lore">>,<<"lorem">>],[]),
+    ?assertEqual(true, is_integer(First)),
+    ?assertEqual(true, is_integer(Second)),
+    ?assertEqual(<<"lore">>, Alpha),
+    ?assertEqual(<<"lorem">>, Beta).
+
+geturls_test() ->
+    %% the tsung call
+    Dynvars = [{url, "lorem"}],
+    [[Alpha,Rand1],[Beta,_]|_] = typeahead:get_urls({os:getpid(), Dynvars}),
+    ?assertEqual(true, is_integer(Rand1)),
+    ?assertEqual(<<"lo">>, Alpha),
+    ?assertEqual(<<"lor">>, Beta).
