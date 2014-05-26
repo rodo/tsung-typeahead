@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<!DOCTYPE tsung SYSTEM "/usr/share/tsung/tsung-1.0.dtd">
+<!--
+
+Author :  Rodolphe Quiedeville
+Context : Test the typeahead module
+
+-->
+<tsung loglevel="debug" dumptraffic="protocol" version="1.0">
+
+  <!-- Client side setup -->
+  <clients>
+    <client host="localhost" use_controller_vm="true"/>
+  </clients>
+
+  <!-- Server side setup -->
+  <servers>
+    <server host="localhost" port="80" type="tcp"/>
+  </servers>
+
+  <load>
+    <arrivalphase phase="1" duration="20" unit="second">
+      <users interarrival="1" unit="second" maxnumber="1"></users>
+    </arrivalphase>
+  </load>
+
+ <sessions>
+
+   <session name='sample' probability='100'  type='ts_http'>
+     <setdynvars sourcetype="value" value="lorem">
+       <var name="url" />
+     </setdynvars>
+
+     <!-- min and max times expressed in millisecond -->
+     <setdynvars sourcetype="eval" code="fun({Pid,DynVars})-> 6 end.">
+       <var name="typeahead_max" />
+     </setdynvars>
+
+     <setdynvars sourcetype="eval" code="fun({Pid,DynVars})-> 3 end.">
+       <var name="typeahead_min" />
+     </setdynvars>
+
+     <setdynvars sourcetype="erlang" callback="typeahead:get_urls">
+       <var name="list_url" />
+     </setdynvars>
+
+     <foreach name="element" in="list_url">
+
+       <setdynvars sourcetype="eval" code="fun({Pid,DynVars})->
+					   {ok,Val}=ts_dynvars:lookup(element,DynVars),
+					   Val end.">
+	 <var name="url" />
+	 <var name="wait" />
+       </setdynvars>
+
+       <request subst="true">
+	 <http url="/api/?q=%%_url%%" method="GET" version="1.1"></http>
+       </request>
+       <thinktime value="0.3" random="true"/>
+     </foreach>
+
+   </session>
+ </sessions>
+</tsung>

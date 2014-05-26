@@ -82,23 +82,34 @@ splithead_short_test() ->
     Attend = ["be", "lle"],
     ?assertEqual(Attend, Result).
 
-
+%%
+%% randwait/0
+%% Time output in millisecond
+%%
 randwait_test() ->
-    Result = is_integer(typeahead:randwait(2, 6)),
-    Attend = true,
-    ?assertEqual(Attend, Result).
+    Result = typeahead:randwait(),
+    ?assert(Result >= 0.3),
+    ?assert(Result =< 1).
+%%
+%% randwait/2
+%% Time output in millisecond
+%%
+randwait_format_test() ->
+    Result = typeahead:randwait(20, 599),
+    ?assertEqual(true, is_float(Result)).
 
+%%
+%% randwait/2
+%%
 randwait_min_test() ->
     Min = 2,
-    Result = typeahead:randwait(Min, 6) >= Min,
-    Attend = true,
-    ?assertEqual(Attend, Result).
+    Result = typeahead:randwait(Min * 1000, 6),
+    ?assert(Result >= Min).
 
 randwait_max_test() ->
     Max = 5,
-    Result = typeahead:randwait(2, Max) =< Max,
-    Attend = true,
-    ?assertEqual(Attend, Result).
+    Result = typeahead:randwait(2, Max * 1000),
+    ?assert(Result =< Max).
 
 decode_urlempty_test() ->
     %% url is not set in tsung scenario
@@ -116,8 +127,8 @@ decode_test() ->
 
 addtime_test()->
     [[Alpha,First], [Beta,Second]] = typeahead:addtime([<<"lore">>,<<"lorem">>],[]),
-    ?assertEqual(true, is_integer(First)),
-    ?assertEqual(true, is_integer(Second)),
+    ?assertEqual(true, is_float(First)),
+    ?assertEqual(true, is_float(Second)),
     ?assertEqual(<<"lore">>, Alpha),
     ?assertEqual(<<"lorem">>, Beta).
 
@@ -126,7 +137,7 @@ geturls_test() ->
     %% Only url is defined, no min and no max 
     Dynvars = [{url, "lorem"}],
     [[Alpha,Rand1],[Beta,_]|_] = typeahead:get_urls({os:getpid(), Dynvars}),
-    ?assertEqual(true, is_integer(Rand1)),
+    ?assertEqual(true, is_float(Rand1)),
     ?assertEqual(<<"lo">>, Alpha),
     ?assertEqual(<<"lor">>, Beta).
 

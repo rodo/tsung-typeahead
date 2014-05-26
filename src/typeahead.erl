@@ -19,8 +19,8 @@
 -export([typeahead/1,typeahead/3]).
 
 -ifdef(TEST).
--export([randwait/2,splithead/3,decode/3,typeahead/5]).
--export([addtime/2]).
+-export([randwait/0,randwait/2,splithead/3,typeahead/5]).
+-export([addtime/2,decode/3]).
 -endif.
 
 get_urls({_Pid, DynVars})->
@@ -79,13 +79,16 @@ splithead(List, Len, Max) ->
 randwait()->
     %%
     %%
-    Min=0.3,
-    Max=12,
+    Min=300,
+    Max=1000,
     randwait(Min, Max).
 %%
 %% Random value in a specified range
-%% Return : float
+%%
+%% Min : time in millisecond
+%%
+%% Return : float time in second
 randwait(Min, Max)->
     {N1,N2,N3} = now(),
     random:seed(N1,N2,N3),
-    max(Min,random:uniform(Max)).
+    float(max(Min,random:uniform(Max))/1000.0).
