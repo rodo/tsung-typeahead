@@ -123,8 +123,19 @@ addtime_test()->
 
 geturls_test() ->
     %% the tsung call
+    %% Only url is defined, no min and no max 
     Dynvars = [{url, "lorem"}],
     [[Alpha,Rand1],[Beta,_]|_] = typeahead:get_urls({os:getpid(), Dynvars}),
     ?assertEqual(true, is_integer(Rand1)),
     ?assertEqual(<<"lo">>, Alpha),
     ?assertEqual(<<"lor">>, Beta).
+
+geturls_minmax_test() ->
+    %% the tsung call
+    %% min and max are defined
+    Dynvars = [{url, "lorem"},{typeahead_min, 3},{typeahead_max,4}],
+    Result =  typeahead:get_urls({os:getpid(), Dynvars}),
+    [[Alpha,_],[Beta,_]|_] = Result,
+    ?assertEqual(2, length(Result)),
+    ?assertEqual(<<"lor">>, Alpha),
+    ?assertEqual(<<"lore">>, Beta).
