@@ -7,13 +7,13 @@ Usage
 =====
 
 <pre>
-  <setdynvars sourcetype="file" fileid="address" delimiter=";" order="random">
-    <var name="url" />
-  </setdynvars>
+    <setdynvars sourcetype="file" fileid="address" delimiter=";" order="random">
+      <var name="url" />
+    </setdynvars>
 
-  <setdynvars sourcetype="eval" code="fun({Pid,DynVars})-> 15 end.">
-    <var name="typeahead_max" />
-  </setdynvars>
+    <setdynvars sourcetype="eval" code="fun({Pid,DynVars})-> 15 end.">
+      <var name="typeahead_max" />
+    </setdynvars>
 
   <setdynvars sourcetype="eval" code="fun({Pid,DynVars})-> 3 end.">
     <var name="typeahead_min" />
